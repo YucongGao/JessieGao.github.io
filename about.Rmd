@@ -1,0 +1,21 @@
+---
+title: "About Me"
+output: html_document
+---
+- __Name:__ Jessie Gao
+- __Occupation:__ Biostatistical Student
+- __Fun facts about me:__
+  - enjoy coding in R, Python and SAS 
+  - dog lover
+  - crazy about running and tennis
+  - _Love Actually_ is the movie I watch for every Christmas!
+  - Summer is my favorite season
+  - I used to be a basketball player
+
+
+Here is my favorite picture taken in summer, I really love laughing!
+
+<img src="images/meonmeadow.JPG" style="width:75%">
+
+
+

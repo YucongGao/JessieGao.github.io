@@ -1,0 +1,25 @@
+name: "Yay internet!"
+output_dir: "."
+navbar:
+  title: "Jessie's Website"
+  right:
+    - text: "About"
+      href: about.html
+    - text: "My Resume"
+      href: resume.html
+    - text: "Restaurant Inspection Result"
+      href: flexdashboard.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<yg2834@columbia.edu>
+    - icon: fa-github fa-lg
+      href: http://github.com/YucongGao/
+    - icon: fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/yucong-gao/
+    - icon: fa-file-alt fa-lg
+      href: ./files/Gao.Yucong.Resume.pdf
+
+output:
+  html_document:
+    theme: flatly
+    css: style.css
+    

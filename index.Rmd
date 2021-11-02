@@ -1,0 +1,19 @@
+---
+title: "Welcom to Jessie Gao's Website"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+In this website, you can find a page that lists some interesting things about me, a page about my resume, and a dashboard that I created using Instacart Online Grocery Shopping dataset. 
+
+Fasten your seatbelt and let's get it started!
+
+<img src="images/rickandmorty.png" style="width:75%">
+
+
+
+
+

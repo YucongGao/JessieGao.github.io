@@ -1,0 +1,128 @@
+---
+title: "Instacart Online Grocery Shopping"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(p8105.datasets)
+
+library(plotly)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+
+```{r}
+data("instacart")
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Number of Product sold in each aisle
+
+```{r}
+instacart %>% 
+  group_by(aisle) %>% 
+  summarise(n_product = n()) %>% 
+  filter(n_product >= 10000) %>% 
+  mutate(aisle = fct_reorder(aisle, n_product)) %>% 
+  plot_ly(x = ~aisle, y = ~ n_product, type = "bar", color = ~aisle) %>% 
+  layout(xaxis = list(title = 'Aisle'), yaxis = list(title = 'Number of Product Purchased'))
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Top 15 Most Reordered Items in Vegetables Aisle
+
+```{r}
+top_15 = 
+  instacart %>% 
+  filter(aisle == "fresh vegetables") %>% 
+  group_by(product_name) %>% 
+  summarise(reorder_tm = sum(reordered)) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, desc(reorder_tm))) %>% 
+  arrange(product_name) %>% 
+  head(15)  
+  
+top_15 %>% plot_ly(x = ~ product_name, y = ~ reorder_tm, type = "bar", color = ~ product_name) %>% 
+  layout(xaxis = list(title = 'Product'), yaxis = list(title = 'Reordered Times')) %>%
+  layout( xaxis = list(titlefont = list(size = 15), tickfont = list(size = 10)),
+          yaxis = list(titlefont = list(size = 15), tickfont = list(size = 10))) %>% 
+  layout(legend = list(font = list(size = 7)))
+
+```
+
+### Most Popular Products in Ice Cream and Pizza Purchased Time
+
+```{r}
+ice_cream_order_hod = 
+  instacart %>%
+  filter(aisle == "ice cream ice") %>% 
+  group_by(product_name, order_hour_of_day) %>% 
+  summarise(order_pieces = n()) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, desc(order_pieces), sum)) %>% 
+  arrange(product_name) %>% 
+  pivot_wider(names_from = order_hour_of_day, 
+              values_from = order_pieces) %>% 
+  mutate(cate = "ice_cream") %>% 
+  relocate("product_name", "0", "1", "2", "3", everything()) %>% 
+  head(10) 
+
+ice_cream_order_hod[is.na(ice_cream_order_hod)] = 0
+
+
+pizza_order_hod = 
+  instacart %>%
+  filter(aisle == "frozen pizza") %>% 
+  group_by(product_name, order_hour_of_day) %>% 
+  summarise(order_pieces = n()) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, desc(order_pieces), sum)) %>% 
+  arrange(product_name) %>% 
+  pivot_wider(names_from = order_hour_of_day, 
+              values_from = order_pieces) %>% 
+  mutate(cate = "frozen pizza") %>% 
+  relocate("product_name", "0", "1", "2", "3", everything()) %>% 
+  head(10) 
+
+pizza_order_hod[is.na(pizza_order_hod)] = 0  
+ 
+icecream_pizza = bind_rows(ice_cream_order_hod, pizza_order_hod)
+
+icecream_pizza %>% 
+  pivot_longer("0":"23", 
+               names_to = "time_of_day", 
+               values_to = "order_pieces") %>% 
+  mutate(time_of_day = as.numeric(time_of_day), 
+         text_label = str_c("Time: ", time_of_day, "\nTotal pieces ordered: ", order_pieces)) %>% 
+  plot_ly(x = ~ time_of_day, y = ~ order_pieces, type = "scatter", color = ~ product_name, mode = "lines", text = ~ text_label, alpha = .7)  %>% 
+  layout(legend = list(font = list(size = 7))) %>% 
+  layout(xaxis = list(title = 'Order time of the day'), yaxis = list(title = 'Number of Item Ordered'))
+
+```
+
